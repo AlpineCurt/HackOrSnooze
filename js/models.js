@@ -73,7 +73,7 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  async addStory(user, newStory) {
+  static async addStory(user, newStory) {
     let story = {
       storyId: newStory.storyId,
       title: newStory.title,
