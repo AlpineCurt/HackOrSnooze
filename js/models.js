@@ -201,4 +201,8 @@ class User {
       return null;
     }
   }
+
+  isFavorite(story) {
+    this.favorites.some(s => s.storyId === story.storyId);
+  }
 }

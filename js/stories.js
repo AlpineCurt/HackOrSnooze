@@ -23,8 +23,13 @@ function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
+
+  const showStar = Boolean(currentUser);
+
+  //complete showStar bit below
   return $(`
       <li id="${story.storyId}">
+      ${showStar ? starHTML(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -33,6 +38,16 @@ function generateStoryMarkup(story) {
         <small class="story-user">posted by ${story.username}</small>
       </li>
     `);
+}
+
+//complete this below
+function starHTML(story, user) {
+  const isFavorite = user.isFavorite(story);
+  return `
+    <span class="star">
+      <i class="${isFavorite ? 'fas' : 'far'} fa-star"></i>
+    </span>
+  `;
 }
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
@@ -52,20 +67,38 @@ function putStoriesOnPage() {
 }
 
 async function submitStory(evt) {
-  console.debug("submitStory", etv);
+  console.debug("submitStory", evt);
   evt.preventDefault();
 
   const title = $("#story-title").val();
   const author = $("#story-author").val();
-  const url = $("#story-url").val();
+  let url = $("#story-url").val();
+  
+  // The API seems to reject everything without http in the url
+  if (!url.includes("http")) {
+    url = 'http://' + url;
+  }
 
-  const newStory = StoryList.addStory(currentUser, {
+  const newStory = await StoryList.addStory(currentUser, {
     title: title,
     author: author,
     url: url
   });
 
-  console.log('newStory: ', newStory);
+  await axios({
+    url: `${BASE_URL}/stories`,
+    method: "POST",
+    data: {
+      token: localStorage.getItem("token"),
+      story: {
+        author: author,
+        title: title,
+        url: url
+      }
+    }
+  });
+
+  $newStoryForm.trigger("reset");
 }
 
 $newStoryForm.on('submit', submitStory);
