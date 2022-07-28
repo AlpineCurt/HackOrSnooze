@@ -205,4 +205,26 @@ class User {
   isFavorite(story) {
     this.favorites.some(s => s.storyId === story.storyId);
   }
+
+  async toggleFavorite(story) {
+    /* checks if paramater "story" is in favorites list, updates accordingly,
+    and sends either DELETE or POST request to update server-side */
+
+    // Check if already favorited
+    if (this.favorites.some(s => s.storyId === story.storyId)){
+      this.favorites = this.favorites.filter(s => s.storyId !== story.storyId);
+      await axios({
+        url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+        method: "DELETE",
+        data: { token: localStorage.getItem("token") }
+      });
+    } else {
+      this.favorites.push(story);
+        await axios({
+        url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+        method: "POST",
+        data: { token: localStorage.getItem("token") }
+    });
+    }
+  }
 }

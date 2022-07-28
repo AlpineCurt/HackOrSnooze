@@ -26,7 +26,6 @@ function generateStoryMarkup(story) {
 
   const showStar = Boolean(currentUser);
 
-  //complete showStar bit below
   return $(`
       <li id="${story.storyId}">
       ${showStar ? starHTML(story, currentUser) : ""}
@@ -101,4 +100,14 @@ async function submitStory(evt) {
   $newStoryForm.trigger("reset");
 }
 
+async function toggleFavorite(evt) {
+  let $star = $(evt.target);
+  let storyId = $star.closest('li').attr('id');
+  let story = storyList.stories.find(s => s.storyId === storyId);
+  console.log(storyId);
+  await currentUser.toggleFavorite(story);
+  $star.closest('i').toggleClass("fas far");
+}
+
 $newStoryForm.on('submit', submitStory);
+$('.stories-container').on('click', '.star', toggleFavorite);
