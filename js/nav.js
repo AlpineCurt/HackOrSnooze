@@ -9,6 +9,7 @@
 function navAllStories(evt) {
   console.debug("navAllStories", evt);
   hidePageComponents();
+  getAndShowStoriesOnStart();
   putStoriesOnPage();
 }
 
@@ -34,6 +35,7 @@ function updateNavOnLogin() {
   $navLogOut.show();
   $navUserProfile.text(`${currentUser.username}`).show();
   $navSubmit.show();
+  $navFavorites.show();
 }
 
 /* When a user clicks the submit link */

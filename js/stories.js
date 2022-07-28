@@ -12,6 +12,13 @@ async function getAndShowStoriesOnStart() {
   putStoriesOnPage();
 }
 
+function showFavoriteStories() {
+  storyList = new StoryList(currentUser.favorites);
+  putStoriesOnPage();
+}
+
+$navFavorites.on('click', showFavoriteStories);
+
 /**
  * A render method to render HTML for an individual Story instance
  * - story: an instance of Story

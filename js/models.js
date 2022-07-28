@@ -203,12 +203,12 @@ class User {
   }
 
   isFavorite(story) {
-    this.favorites.some(s => s.storyId === story.storyId);
+    return this.favorites.some(s => s.storyId === story.storyId);
   }
 
   async toggleFavorite(story) {
     /* checks if paramater "story" is in favorites list, updates accordingly,
-    and sends either DELETE or POST request to update server-side */
+    and sends either DELETE or POST request to update server */
 
     // Check if already favorited
     if (this.favorites.some(s => s.storyId === story.storyId)){
