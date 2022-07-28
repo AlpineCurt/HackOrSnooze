@@ -36,6 +36,7 @@ function updateNavOnLogin() {
   $navUserProfile.text(`${currentUser.username}`).show();
   $navSubmit.show();
   $navFavorites.show();
+  $navMyStories.show();
 }
 
 /* When a user clicks the submit link */
@@ -47,3 +48,23 @@ function navSubmitClick(evt) {
 }
 
 $navSubmit.on('click', navSubmitClick);
+
+/* When a user clicks my stories */
+
+function navMyStoriesClick(evt) {
+  console.debug('navUsernameClick');
+  storyList = new StoryList(currentUser.ownStories);
+  hidePageComponents();
+  putStoriesOnPage();
+}
+
+$navMyStories.on('click', navMyStoriesClick);
+
+/* When a user clicks on 'favorites' */
+function showFavoriteStories() {
+  storyList = new StoryList(currentUser.favorites);
+  hidePageComponents();
+  putStoriesOnPage();
+}
+
+$navFavorites.on('click', showFavoriteStories);

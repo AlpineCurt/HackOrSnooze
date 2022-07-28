@@ -12,13 +12,6 @@ async function getAndShowStoriesOnStart() {
   putStoriesOnPage();
 }
 
-function showFavoriteStories() {
-  storyList = new StoryList(currentUser.favorites);
-  putStoriesOnPage();
-}
-
-$navFavorites.on('click', showFavoriteStories);
-
 /**
  * A render method to render HTML for an individual Story instance
  * - story: an instance of Story
@@ -32,9 +25,11 @@ function generateStoryMarkup(story) {
   const hostName = story.getHostName();
 
   const showStar = Boolean(currentUser);
+  const showTrash = currentUser.ownStories.some(s => s.storyId === story.storyId);
 
   return $(`
       <li id="${story.storyId}">
+      ${showTrash ? trashHTML() : ""}
       ${showStar ? starHTML(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
@@ -46,13 +41,22 @@ function generateStoryMarkup(story) {
     `);
 }
 
-//complete this below
+/* generates HTML for star icon */
 function starHTML(story, user) {
   const isFavorite = user.isFavorite(story);
   return `
     <span class="star">
       <i class="${isFavorite ? 'fas' : 'far'} fa-star"></i>
     </span>
+  `;
+}
+
+/* Generate HTML for trashcan icon */
+function trashHTML() {
+  return `
+  <span class="trashCan">
+    <i class="fas fa-trash-alt"></i>
+  </span>
   `;
 }
 
@@ -105,6 +109,8 @@ async function submitStory(evt) {
   });
 
   $newStoryForm.trigger("reset");
+  hidePageComponents();
+  getAndShowStoriesOnStart();
 }
 
 async function toggleFavorite(evt) {
@@ -116,5 +122,20 @@ async function toggleFavorite(evt) {
   $star.closest('i').toggleClass("fas far");
 }
 
+async function deleteStory(evt) {
+  let $trash = $(evt.target);
+  let storyId = $trash.closest('li').attr('id');
+  await axios({
+    url: `${BASE_URL}/stories/${storyId}`,
+    method: "DELETE",
+    data: {
+      token: localStorage.getItem("token"),
+    }
+  });
+  currentUser.ownStories = currentUser.ownStories.filter(s => s.storyId !== storyId);
+  getAndShowStoriesOnStart();
+}
+
 $newStoryForm.on('submit', submitStory);
 $('.stories-container').on('click', '.star', toggleFavorite);
+$('.stories-container').on('click', '.trashCan', deleteStory);

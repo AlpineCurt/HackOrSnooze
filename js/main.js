@@ -18,6 +18,7 @@ const $navSubmit = $('#nav-new-story'); // link on nav bar
 const $newStoryForm = $('#newStory-form');  // new story html form
 
 const $navFavorites = $('#nav-favorites');
+const $navMyStories = $('#nav-my-stories');
 
 /** To make it easier for individual components to show just themselves, this
  * is a useful function that hides pretty much everything on the page. After
